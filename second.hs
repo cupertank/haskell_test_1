@@ -7,6 +7,7 @@ data BSTree a = Nil
 instance Foldable BSTree where
     foldr f acc Nil                   = acc
     foldr f acc (Node val left right) = do
+        foldr f (f val acc) left
         foldr f (f val acc) right
         f val acc
 
