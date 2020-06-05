@@ -4,24 +4,17 @@ data BSTree a = Nil
               | Node {val :: a, left :: BSTree a, right :: BSTree a}
                 deriving Show
 
-instance Foldable BSTree where
-    foldr f acc Nil                   = acc
-    foldr f acc (Node val left right) = do
-        foldr f (f val acc) left
-        foldr f (f val acc) right
-        f val acc
-
-
-findElem tree = foldM findElem' (Nothing, Nothing) tree
-
-findElem' (Nothing, Nothing) val = return (Nothing, Just val)
-findElem' (Nothing, Just right)   val = return (Just val, Just right)
-
-findElem' (Just parent, Just praparent) val = do
-    if parent * praparent == val then
-        print val
-    else
-        print ""
-    return (Just val, Just parent)
-
 tree =  Node 5 (Node 2 Nil (Node 10 Nil Nil)) Nil
+
+findElem tree = do
+    elem <- findElem' tree (Nothing, Nothing)
+    print elem
+
+findElem' Nil _ = return Nothing
+findElem' (Node val left right) (parent, praparent) = do
+    lans <- findElem' left (Just val, parent)
+    rans <- findElem' right (Just val, parent)
+    curans <- case (parent, praparent) of
+              (Just x, Just y) -> if x * y == val then return (Just val) else return Nothing
+              _                -> return Nothing
+    return (curans `mplus` lans `mplus` rans)
