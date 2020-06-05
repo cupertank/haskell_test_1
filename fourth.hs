@@ -1,3 +1,8 @@
-supermap  :: [a] ->  (a -> [b]) -> [b]
+groupElems [] = []
+groupElems (x:xs) = reverse (lastGroup:ans)
+    where
+        (ans, lastGroup, _) = foldl groupElems' ([], [x], x) xs
 
-supermap x f = concatMap f x
+groupElems' (ans, group, elem) x
+                                | x == elem = (ans, (x:group), elem)
+                                | x /= elem = ((group:ans), [x], x) 
